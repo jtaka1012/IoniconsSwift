@@ -17,7 +17,7 @@
 Swift Package Manager (Xcode 12+ / Swift 5.3+): Add `https://github.com/tidwall/IoniconsSwift.git` via Xcode, or include it in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/tidwall/IoniconsSwift.git", from: "2.1.4")
+.package(url: "https://github.com/tidwall/IoniconsSwift.git", from: "2.2.0")
 ```
 
 [Carthage](https://github.com/Carthage/Carthage): Add `github tidwall/IoniconsSwift` to your `Cartfile`.  
