@@ -10,20 +10,42 @@
 * The Ionicons TTF font file was originated from http://ionicons.com/
 */
 import UIKit
+import CoreText
+
+private final class BundleToken {}
+
+private func ioniconsFontURL() -> URL? {
+#if SWIFT_PACKAGE
+    return Bundle.module.url(forResource: "ionicons", withExtension: "ttf")
+#else
+    let bundles: [Bundle?] = [
+        Bundle(for: BundleToken.self),
+        Bundle(identifier: "org.cocoapods.IoniconsSwift"),
+        Bundle.main
+    ]
+    return bundles.compactMap { $0?.url(forResource: "ionicons", withExtension: "ttf") }.first
+#endif
+}
 
 private var loaded = false
-private func load(){
+private func load() {
 	if loaded {
 		return
 	}
 	loaded = true
-    let inData = try? Data(contentsOf: URL(fileURLWithPath: Bundle(identifier: "org.cocoapods.IoniconsSwift")!.path(forResource: "ionicons", ofType: "ttf")!))
-	var error : Unmanaged<CFError>?
-    let provider = CGDataProvider(data: inData! as CFData)
-	let font = CGFont(provider!)
-    if !CTFontManagerRegisterGraphicsFont(font!, &error) {
-		let errorDescription = CFErrorCopyDescription(error!.takeRetainedValue())
-        NSLog("Failed to load font: %@", errorDescription! as String);
+
+    guard let url = ioniconsFontURL(),
+          let inData = try? Data(contentsOf: url),
+          let provider = CGDataProvider(data: inData as CFData),
+          let font = CGFont(provider) else {
+        NSLog("Failed to locate ionicons.ttf in bundle")
+        return
+    }
+
+	var error: Unmanaged<CFError>?
+    if !CTFontManagerRegisterGraphicsFont(font, &error) {
+		let errorDescription = error?.takeRetainedValue().localizedDescription ?? "unknown error"
+        NSLog("Failed to load font: %@", errorDescription);
 	}
 }
 public enum Ionicons : UInt16, CustomStringConvertible {
